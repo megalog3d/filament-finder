@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Regionale Filament-Hersteller Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
 <style>
   * { box-sizing: border-box; }
   body {
@@ -140,6 +141,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js"></script>
 <script>
 
 // Beispieldaten - ersetze das durch deine echten Hersteller
@@ -197,7 +199,9 @@ const herstellerData = [
   }
 ];
 
-const map = L.map('map').setView([51.1657, 10.4515], 6);
+const map = L.map('map', {
+  gestureHandling: true
+}).setView([51.1657, 10.4515], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap-Mitwirkende',
