@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regionale Filament-Hersteller Finder</title>
+<title>Filament Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
 <style>
   * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #f4f2ec;
     color: #23231f;
+    display: flex;
+    flex-direction: column;
   }
   header {
-    background: #1d5c46;
+    background: #0d556f;
     color: #fff;
     padding: 1.25rem 1.5rem;
   }
@@ -45,25 +48,42 @@
     background: #fafaf7;
   }
   .controls input[type="text"] {
-    flex: 1;
-    min-width: 180px;
+    flex: 0 1 220px;
+    min-width: 160px;
   }
   .controls select {
     min-width: 140px;
   }
+  #materialFilter {
+    background: #d5f1f1;
+    border-color: #0d6e6e;
+    color: #0d6e6e;
+  }
+  #additiveFilter {
+    background: #ece2f7;
+    border-color: #6a3fac;
+    color: #6a3fac;
+  }
+  #specialtyFilter {
+    background: #fbe3cc;
+    border-color: #a85512;
+    color: #a85512;
+  }
   .layout {
     display: flex;
-    flex-wrap: wrap;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
   #map {
     flex: 2;
     min-width: 320px;
-    height: 560px;
+    min-height: 0;
   }
   #list {
     flex: 1;
     min-width: 280px;
-    height: 560px;
+    min-height: 0;
     overflow-y: auto;
     background: #fff;
     border-left: 1px solid #e0ddd3;
@@ -83,24 +103,83 @@
   .card h3 {
     margin: 0 0 0.25rem 0;
     font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
   }
   .card p {
     margin: 0.15rem 0;
     font-size: 0.8rem;
     color: #55534c;
   }
+  .card a {
+    font-size: 0.8rem;
+    color: #0d556f;
+  }
   .tags {
     margin-top: 0.4rem;
   }
   .tag {
     display: inline-block;
-    background: #e7f2ec;
-    color: #1d5c46;
+    background: #d5f1f1;
+    color: #0d6e6e;
     font-size: 0.7rem;
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
     margin-right: 0.25rem;
     margin-top: 0.25rem;
+  }
+  .tag-special {
+    display: inline-block;
+    background: #fbe3cc;
+    color: #a85512;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+  }
+  .tag-additive {
+    display: inline-block;
+    background: #ece2f7;
+    color: #6a3fac;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+  }
+  .extra-tag { display: none; }
+  .tags.expanded .extra-tag { display: inline-block; }
+  .tag-more {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: #55534c;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 0.25rem;
+    margin-top: 0.25rem;
+  }
+  .flag-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid #ccc8ba;
+    border-radius: 6px;
+    background: #fafaf7;
+    color: #55534c;
+    font-weight: 400;
+  }
+  @media (max-width: 700px) {
+    html, body { height: auto; }
+    .layout { flex-direction: column; overflow: visible; }
+    #map { min-height: 320px; }
+    #list { max-height: 65vh; border-left: none; border-top: 1px solid #e0ddd3; }
   }
   .count {
     padding: 0.5rem 1.5rem;
@@ -113,23 +192,21 @@
 <body>
 
 <header>
-  <h1>Regionale Filament-Hersteller Finder</h1>
-  <p>Finde 3D-Druck-Filament-Hersteller in deiner Nähe</p>
+  <h1>Regional Filament-Manufacturer Finder</h1>
+  <p>Find 3d printing Filament manufacturers near you</p>
 </header>
 
 <div class="controls">
-  <input type="text" id="searchInput" placeholder="Suche nach Name oder Ort...">
+  <input type="text" id="searchInput" placeholder="Search by name or city...">
+  <input type="text" id="materialSearchInput" placeholder="Search materials (e.g. Matt, CF, Wood)...">
   <select id="materialFilter">
-    <option value="">Alle Materialien</option>
-    <option value="PLA">PLA</option>
-    <option value="PETG">PETG</option>
-    <option value="ABS">ABS</option>
-    <option value="ASA">ASA</option>
-    <option value="TPU">TPU</option>
+    <option value="">All materials</option>
   </select>
-  <select id="recyclingFilter">
-    <option value="">Recycling: egal</option>
-    <option value="yes">Bietet Recycling an</option>
+  <select id="additiveFilter">
+    <option value="">All additives</option>
+  </select>
+  <select id="specialtyFilter">
+    <option value="">All specialties</option>
   </select>
 </div>
 
@@ -144,69 +221,226 @@
 <script src="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js"></script>
 <script>
 
-// Beispieldaten - ersetze das durch deine echten Hersteller
-// (lat/lng, materials als Array, recycling als true/false)
+// Manufacturer data - add more entries below as you research them
 const herstellerData = [
   {
-    name: "GreenFil Berlin",
-    ort: "Berlin",
-    lat: 52.5200,
-    lng: 13.4050,
+    name: "Extrudr",
+    city: "Lustenau, Austria",
+    origin: "Austria",
+    lat: 47.4333,
+    lng: 9.6667,
+    materials: ["PLA Basic", "PLA NX2 Matt", "PLA CF", "PLA Tough", "BioFusion", "GreenTEC", "GreenTEC Pro", "GreenTEC Pro CF", "Flax", "Pearl", "Wood", "PETG", "PCTG", "PETG Matt", "PETG CF", "PETG REC", "ABS", "ASA", "ASA CF", "ASA GF", "PA12", "PA12 CF", "PC/PBT", "PC/PBT CF", "Flex", "Flex ESD", "Flex CF"],
+    website: "https://www.extrudr.com/en/de/",
+    description: "High-quality filaments made in Austria, pioneer in bio-based materials."
+  },
+  {
+    name: "nobufil",
+    city: "Krems an der Donau, Austria",
+    origin: "Austria",
+    lat: 48.4103,
+    lng: 15.6141,
+    materials: ["PLAx", "PLAx Matt", "PETG", "PETG Matt", "PETG CF", "PETG GF", "PCTG", "ABSx", "ABSx Matt", "ASA", "PCx", "Glow in the dark"],
+    website: "https://www.nobufil.com/en",
+    description: "Austrian manufacturer producing filament from 100% recycled industrial plastic waste."
+  },
+  {
+    name: "Material4Print",
+    city: "Löhne, Germany",
+    origin: "Germany",
+    lat: 52.1950,
+    lng: 8.7316,
+    materials: ["PLA", "PLA Tough", "PLA ESD", "PETG", "PETG ESD", "PET CF15", "ABS", "ABS ESD", "ASA", "PC/ABS", "PAHT", "PAHT CF15", "PMMA", "TPU"],
+    website: "https://www.material4print.de",
+    description: "Founded 2014, one of the first German filament makers, produces exclusively in Löhne."
+  },
+  {
+    name: "CR-3D",
+    city: "Cham, Germany",
+    origin: "Germany",
+    lat: 49.2231,
+    lng: 12.6633,
+    materials: ["PLA", "PLA Soft", "PLA CRystal", "PLA CF10", "PETG", "PETG ESD", "PETG V0", "PET CF15", "ABS", "ABS Matt", "ABS FibCR20", "ABS ESD", "ASA", "ASA X", "ASA X FibCR20", "PA6 CF20", "PA6 GF20", "PA12", "PA12 Flex", "PA12 CF15", "PA12 ESD", "PC/ABS", "PC/ABS V0", "PC CF10", "PC FibCR20", "PPS CF10", "TPU 85A", "TPU ESD", "Flex FibCR20", "PP FibCR20", "Support"],
+    website: "https://www.cr3d.de/kategorie/filamente/",
+    description: "Bavarian full-range supplier developing printers, filaments and its own slicer in-house."
+  },
+  {
+    name: "Filament Unger",
+    city: "Schopfheim, Germany",
+    origin: "Germany",
+    lat: 47.6511,
+    lng: 7.8214,
+    materials: ["PLA+", "ABS+", "PETG", "PA12 CF15"],
+    website: "https://filament-unger.de/",
+    description: "Filament arm of a family-run injection moulding company founded in 1952, ISO 9001 certified."
+  },
+  {
+    name: "Bavaria Filaments",
+    city: "Freilassing, Germany",
+    origin: "Germany",
+    lat: 47.8378,
+    lng: 12.9758,
+    materials: ["PLA", "PETG", "PETG REC", "ABS", "ASA", "TPU", "PSflex Support"],
+    website: "https://www.bavaria-filaments.com/",
+    description: "Founded 2017 in Bavaria, offers standard filaments plus custom materials on request."
+  },
+  {
+    name: "GRAUTS",
+    city: "Löhne, Germany",
+    origin: "Germany",
+    lat: 52.2011,
+    lng: 8.6939,
+    materials: ["PLA", "PETG", "ABS", "PMMA", "PA", "PA CF", "PA GF", "HPP", "HPP 52ShD", "Flex", "Flex S90"],
+    website: "https://grauts.com/",
+    description: "Over 20 materials from standard to technical fibre-reinforced, plus custom compounds."
+  },
+  {
+    name: "DAS FILAMENT",
+    city: "Emskirchen, Germany",
+    origin: "Germany",
+    lat: 49.5522,
+    lng: 10.7053,
     materials: ["PLA", "PETG"],
-    recycling: true,
-    website: "https://example.com",
-    beschreibung: "Recyceltes PLA aus lokalen Reststoffen."
+    website: "https://dasfilament.de/",
+    description: "Started 2014 in Braunschweig, moved to Bavaria in 2018, sells direct without middlemen."
   },
   {
-    name: "Nordfil Hamburg",
-    ort: "Hamburg",
-    lat: 53.5511,
-    lng: 9.9937,
-    materials: ["ABS", "ASA"],
-    recycling: false,
-    website: "https://example.com",
-    beschreibung: "Technische Filamente für Industrieanwendungen."
+    name: "REDLINE FILAMENT",
+    city: "Neuss, Germany",
+    origin: "",
+    lat: 51.2000,
+    lng: 6.6833,
+    materials: ["PLA", "PLA REC", "PETG", "PETG Matt", "PETG Wizard", "PETG Glitzer", "PETG REC", "PCTG", "ABS", "ASA X", "PC", "PA6", "TPU", "PVA", "Carbon", "Kevlar", "Glow in the dark"],
+    website: "https://redline-filament.com/",
+    description: "Broad range on recyclable cardboard spools, with a spool return system for any brand."
   },
   {
-    name: "Bayern Filament Werk",
-    ort: "München",
-    lat: 48.1351,
-    lng: 11.5820,
-    materials: ["PLA", "TPU"],
-    recycling: true,
-    website: "https://example.com",
-    beschreibung: "Flexible Materialien, Made in Bayern."
+    name: "Recycling Fabrik",
+    city: "Braunschweig, Germany",
+    origin: "Germany",
+    lat: 52.2900,
+    lng: 10.5300,
+    materials: ["PLA", "PETG"],
+    website: "https://www.recyclingfabrik.com/",
+    description: "Collects 3D printing waste from makers and turns it into 100% recycled filament."
   },
   {
-    name: "Rhein-Ruhr Plastics",
-    ort: "Köln",
-    lat: 50.9375,
-    lng: 6.9603,
-    materials: ["PETG", "ABS"],
-    recycling: false,
-    website: "https://example.com",
-    beschreibung: "Industriequalität zu fairen Preisen."
-  },
-  {
-    name: "Sachsen 3D Materials",
-    ort: "Dresden",
-    lat: 51.0504,
-    lng: 13.7373,
-    materials: ["PLA", "PETG", "ASA"],
-    recycling: true,
-    website: "https://example.com",
-    beschreibung: "Breites Sortiment, Fokus auf Nachhaltigkeit."
+    name: "Fiberthree",
+    city: "Darmstadt, Germany",
+    origin: "Germany",
+    lat: 49.8760,
+    lng: 8.6690,
+    materials: ["PA Pure Pro", "PA Pure Lite", "PA CF Pro", "PA CF Lite", "PA GF Pro", "PA GF30 Pro", "PA ESD"],
+    website: "http://www.fiberthree.com/",
+    description: "Polyamide specialist: unfilled, carbon and glass fibre reinforced plus ESD-safe filaments."
   }
 ];
 
+// Country name -> flag emoji. Add more entries as new countries come up.
+const countryFlags = {
+  "Germany": "🇩🇪",
+  "Austria": "🇦🇹",
+  "Switzerland": "🇨🇭",
+  "Netherlands": "🇳🇱"
+};
+
+function getFlag(country) {
+  return countryFlags[country] || "";
+}
+
+// Renders the "Made in <flag>" badge, or nothing if the origin is unknown.
+function flagTag(origin) {
+  const flag = getFlag(origin);
+  if (!flag) return "";
+  return `<span class="flag-tag">Made in ${flag}</span>`;
+}
+
+// Maps a raw material name to its base category.
+// Returns null if it doesn't clearly fit one (= a "specialty" material).
+// Order matters: more specific checks must come first.
+function getBaseCategory(material) {
+  const m = material.toLowerCase();
+  if (m.includes('support') || m.includes('psflex')) return 'Support';
+  if (m.startsWith('pc/')) return 'PC';
+  if (m.includes('petg') || m.includes('pet-g') || m.includes('pctg') || m.includes('pet-cf') || m.includes('pet cf')) return 'PETG';
+  if (m.includes('pla')) return 'PLA';
+  if (m.includes('asa')) return 'ASA';
+  if (m.includes('abs')) return 'ABS';
+  if (m.includes('pmma')) return 'PMMA';
+  if (m.includes('pps')) return 'PPS';
+  if (m.includes('nylon') || m.includes('paht') || m.includes('pa12') || m.includes('pa 12') ||
+      m.includes('pa6') || m.includes('pa 6') || m.includes('pa-cf') || m.includes('pa-gf') ||
+      m.includes(' pa ') || m === 'pa' || m.startsWith('pa ')) return 'PA';
+  if (m.includes('pc')) return 'PC';
+  if (m.includes('tpu') || m.includes('tpe') || m.includes('flex')) return 'TPU';
+  if (m.includes('hpp') || m.includes('pp')) return 'PP';
+  if (m.includes('hips')) return 'HIPS';
+  if (m.includes('pva')) return 'PVA';
+  return null;
+}
+
+// Known additive keywords. Only ones actually found in the data
+// end up as dropdown options.
+const knownAdditives = ["CF", "GF", "FibCR", "Kevlar", "Carbon", "Matt", "Tough", "ESD", "REC", "V0"];
+
+// True if the whole material name IS an additive (e.g. "Kevlar") - base unknown.
+function isPureAdditive(material) {
+  return knownAdditives.some(a => a.toLowerCase() === material.toLowerCase());
+}
+
+function fillSelect(selectId, values) {
+  const select = document.getElementById(selectId);
+  values.sort().forEach(v => {
+    const option = document.createElement('option');
+    option.value = v;
+    option.textContent = v;
+    select.appendChild(option);
+  });
+}
+
+function populateMaterialFilter() {
+  const categories = new Set();
+  herstellerData.forEach(item => {
+    item.materials.forEach(m => {
+      const cat = getBaseCategory(m);
+      if (cat) categories.add(cat);
+    });
+  });
+  fillSelect('materialFilter', Array.from(categories));
+}
+
+function populateAdditiveFilter() {
+  const found = new Set();
+  herstellerData.forEach(item => {
+    item.materials.forEach(m => {
+      knownAdditives.forEach(add => {
+        if (m.toLowerCase().includes(add.toLowerCase())) found.add(add);
+      });
+    });
+  });
+  fillSelect('additiveFilter', Array.from(found));
+}
+
+function populateSpecialtyFilter() {
+  const specialties = new Set();
+  herstellerData.forEach(item => {
+    item.materials.forEach(m => {
+      if (getBaseCategory(m) === null && !isPureAdditive(m)) specialties.add(m);
+    });
+  });
+  fillSelect('specialtyFilter', Array.from(specialties));
+}
+
 const map = L.map('map', {
   gestureHandling: true
-}).setView([51.1657, 10.4515], 6);
+}).setView([50.5, 10.5], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap-Mitwirkende',
+  attribution: '&copy; OpenStreetMap contributors',
   maxZoom: 18
 }).addTo(map);
+
+// How many material tags a card shows before collapsing the rest
+const TAG_LIMIT = 8;
 
 let markers = [];
 
@@ -219,22 +453,45 @@ function renderMarkersAndList(data) {
   data.forEach(item => {
     const marker = L.marker([item.lat, item.lng]).addTo(map);
     marker.bindPopup(
-      `<strong>${item.name}</strong><br>${item.ort}<br>${item.materials.join(', ')}`
+      `<strong>${item.name}</strong> ${flagTag(item.origin)}<br>${item.city}<br>${item.description}`
     );
     markers.push(marker);
 
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
-      <h3>${item.name}</h3>
-      <p>${item.ort}</p>
-      <p>${item.beschreibung}</p>
+      <h3>${item.name} ${flagTag(item.origin)}</h3>
+      <p>${item.city}</p>
+      <p>${item.description}</p>
+      <a href="${item.website}" target="_blank" rel="noopener">${item.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
       <div class="tags">
-        ${item.materials.map(m => `<span class="tag">${m}</span>`).join('')}
-        ${item.recycling ? '<span class="tag">Recycling</span>' : ''}
+        ${item.materials.map((m, idx) => {
+          const base = getBaseCategory(m);
+          const hasAdditive = knownAdditives.some(add => m.toLowerCase().includes(add.toLowerCase()));
+          let cls = 'tag';
+          if (base === null) {
+            cls = isPureAdditive(m) ? 'tag-additive' : 'tag-special';
+          } else if (hasAdditive) {
+            cls = 'tag-additive';
+          }
+          if (idx >= TAG_LIMIT) cls += ' extra-tag';
+          return `<span class="${cls}">${m}</span>`;
+        }).join('')}
+        ${item.materials.length > TAG_LIMIT
+          ? `<span class="tag-more">+${item.materials.length - TAG_LIMIT} more</span>`
+          : ''}
       </div>
     `;
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') return;
+      if (e.target.classList.contains('tag-more')) {
+        const tagBox = card.querySelector('.tags');
+        tagBox.classList.toggle('expanded');
+        e.target.textContent = tagBox.classList.contains('expanded')
+          ? 'show less'
+          : `+${item.materials.length - TAG_LIMIT} more`;
+        return;
+      }
       map.setView([item.lat, item.lng], 10);
       marker.openPopup();
     });
@@ -242,33 +499,55 @@ function renderMarkersAndList(data) {
   });
 
   document.getElementById('resultCount').textContent =
-    `${data.length} Hersteller gefunden`;
+    `${data.length} manufacturers found`;
 }
 
 function applyFilters() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const materialSearchTerm = document.getElementById('materialSearchInput').value.toLowerCase();
   const material = document.getElementById('materialFilter').value;
-  const recycling = document.getElementById('recyclingFilter').value;
+  const additive = document.getElementById('additiveFilter').value;
+  const specialty = document.getElementById('specialtyFilter').value;
 
   const filtered = herstellerData.filter(item => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm) ||
-      item.ort.toLowerCase().includes(searchTerm);
-    const matchesMaterial = !material || item.materials.includes(material);
-    const matchesRecycling = !recycling || item.recycling === true;
-    return matchesSearch && matchesMaterial && matchesRecycling;
+      item.city.toLowerCase().includes(searchTerm);
+
+    const matchesMaterialSearch =
+      !materialSearchTerm ||
+      item.materials.some(m => m.toLowerCase().includes(materialSearchTerm));
+
+    // Base material and additive must match on the SAME material string,
+    // not just "PLA somewhere in the list AND CF somewhere else".
+    const matchesMaterialAndAdditive = item.materials.some(m => {
+      const matchesBase = !material || getBaseCategory(m) === material;
+      const matchesAdd = !additive || m.toLowerCase().includes(additive.toLowerCase());
+      return matchesBase && matchesAdd;
+    });
+
+    const matchesSpecialty = !specialty || item.materials.includes(specialty);
+
+    return matchesSearch && matchesMaterialSearch && matchesMaterialAndAdditive && matchesSpecialty;
   });
 
   renderMarkersAndList(filtered);
 }
 
 document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('materialSearchInput').addEventListener('input', applyFilters);
 document.getElementById('materialFilter').addEventListener('change', applyFilters);
-document.getElementById('recyclingFilter').addEventListener('change', applyFilters);
+document.getElementById('additiveFilter').addEventListener('change', applyFilters);
+document.getElementById('specialtyFilter').addEventListener('change', applyFilters);
 
+populateMaterialFilter();
+populateAdditiveFilter();
+populateSpecialtyFilter();
 renderMarkersAndList(herstellerData);
 
 </script>
 
+</body>
+</html>
 </body>
 </html>
