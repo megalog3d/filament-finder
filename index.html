@@ -382,8 +382,9 @@ function getBaseCategory(material) {
   if (m.includes('pps')) return 'PPS';
   if (m.includes('pvb')) return 'PVB';
   if (m.includes('pei')) return 'PEI';
-  if (m.includes('pa11') || m.includes('pa12') || m.includes('nylon') || m.includes(' pa ') || m.startsWith('pa ') || m === 'pa') return 'PA';
+  if (m.includes('pa11') || m.includes('pa12') || m.includes('pa6') || m.includes('nylon') || m.includes(' pa ') || m.startsWith('pa ') || m === 'pa') return 'PA';
   if (m.includes('pc')) return 'PC';
+  if (m.includes('paht')) return 'PAHT';
   
   // Groups all flexible materials (TPU, TPE, TPC, ...) by property instead of by chemistry
   if (m.includes('tpu') || m.includes('tpe') || m.includes('flex')) return 'Flex';
@@ -403,7 +404,7 @@ function isPureAdditive(material) {
 }
 
 // Dropdown order: the everyday materials first, exotics further down.
-const categoryOrder = ["PLA", "PETG", "ABS", "ASA", "PA", "PC", "Flex",
+const categoryOrder = ["PLA", "PETG", "ABS", "ASA", "PA", "PAHT", "PC", "Flex",
                        "PP", "PPS", "PMMA", "HPP", "PVA", "Support"];
 
 // Sorts by the given preferred order; anything unlisted goes last, alphabetically.
