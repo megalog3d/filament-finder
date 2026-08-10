@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Filament Finder megalog_</title>
+<title>Filament Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
 <style>
@@ -95,10 +95,14 @@
     border-radius: 8px;
     margin-bottom: 0.5rem;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
   }
   .card:hover {
     background: #f3f1e8;
+  }
+  .card.highlighted {
+    border-color: #0d556f;
+    box-shadow: 0 0 0 2px rgba(13, 85, 111, 0.25);
   }
   .card h3 {
     margin: 0 0 0.25rem 0;
@@ -187,6 +191,22 @@
     color: #55534c;
     background: #fff;
   }
+  .disclaimer {
+    padding: 0.4rem 1.5rem;
+    font-size: 0.75rem;
+    color: #8a8577;
+    background: #faf9f5;
+    border-bottom: 1px solid #e0ddd3;
+  }
+
+  /* Materials feature paused - remove this block to bring it back */
+  #materialSearchInput,
+  #materialFilter,
+  #additiveFilter,
+  #specialtyFilter,
+  .tags {
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -212,6 +232,8 @@
 
 <div class="count" id="resultCount"></div>
 
+<div class="disclaimer">Data provided without guarantee — locations, materials, and links may be outdated or inaccurate.</div>
+
 <div class="layout">
   <div id="map"></div>
   <div id="list"></div>
@@ -225,10 +247,10 @@
 const herstellerData = [
   {
     name: "Extrudr",
-    city: "Lustenau, Austria",
+    city: "Lauterach, Austria",
     origin: "Austria",
-    lat: 47.4333,
-    lng: 9.6667,
+    lat: 47.4903,
+    lng: 9.7183,
     materials: ["PLA Basic", "PLA Basic CF", "PLA HS", "PLA NX2 Matt", "PLA Tough", "BioFusion", "GreenTEC", "GreenTEC Pro", "GreenTEC Pro CF", "Flax", "Pearl", "Wood", "PETG", "PETG CF", "PETG Matt", "PETG REC", "ABS", "ABS CF", "ASA", "ASA CF", "ASA GF", "PA6 CF", "PA6 GF", "PA12", "PA12 CF", "PC FR V0", "PC/PBT", "PC/PBT CF", "Flex Semisoft", "Flex Medium", "Flex Medium Matt", "Flex Medium ESD", "Flex Hard", "Flex Hard CF"],
     website: "https://www.extrudr.com/en/de/",
     description: ""
@@ -334,16 +356,245 @@ const herstellerData = [
     description: ""
   },
   {
-    name: "Pursament by Pursa",
-    city: "Prage, CZECH REPUBLIC",
-    origin: "CZECH REPUBLIC",
+    name: "Prusament by Prusa",
+    city: "Prague, Czech Republic",
+    origin: "Czech Republic",
     lat: 50.0886,
     lng: 14.4214,
     materials: ["PLA", "PETG CF", "PETG Tungesten 75", "PETG Magnetite", "PETG Ultraglow", "ASA", "PC Blend", "PC Blend CF", "PA11", "PA11 CF", "PP GF", "PP CF", "TPU 95A", "PVB", "PEI", "Woodfill" ],
     website: "https://www.prusa3d.com/category/prusament/",
     description: ""
   },
-  
+  {
+    name: "igus",
+    city: "Köln, Germany",
+    origin: "",
+    lat: 50.9375,
+    lng: 6.9603,
+    materials: ["iglidur i150", "iglidur i151", "iglidur i180", "iglidur i190", "iglidur i190PF", "iglidur A350", "iglidur RW370", "igumid P150"],
+    website: "https://www.igus.de/3d-printing-material/3d-drucker-filament",
+    description: ""
+  },
+  {
+    name: "Fillamentum",
+    city: "Hulín, Czech Republic",
+    origin: "Czech Republic",
+    lat: 49.3167,
+    lng: 17.4667,
+    materials: ["PLA", "ABS", "ASA", "HIPS", "PVA", "CPE", "Nylon", "Flexfill", "Timberfill", "NonOilen"],
+    website: "https://fillamentum.com/",
+    description: ""
+  },
+  {
+    name: "3dk.berlin",
+    city: "Berlin, Germany",
+    origin: "Germany",
+    lat: 52.5966,
+    lng: 13.2274,
+    materials: ["PLA", "ABS", "ABS FlamelessV0", "PETG", "IMPAK", "WillowFlex", "3dkTop", "3DKlean"],
+    website: "https://3dk.berlin/de/",
+    description: ""
+  },
+  {
+    name: "Filament PM",
+    city: "Haňovice, Czech Republic",
+    origin: "Czech Republic",
+    lat: 49.6981,
+    lng: 17.0764,
+    materials: ["PLA", "ABS", "PETG", "RubberJet", "PAJet", "CFJet"],
+    website: "https://www.filament-pm.com/",
+    description: ""
+  },
+  {
+    name: "FormFutura",
+    city: "Nijmegen, Netherlands",
+    origin: "Netherlands",
+    lat: 51.8425,
+    lng: 5.8528,
+    materials: ["PLA", "ABS", "PETG", "PP", "ApolloX", "TitanX", "CarbonFil", "HDglass"],
+    website: "https://formfutura.com/",
+    description: ""
+  },
+  {
+    name: "Recreus",
+    city: "Elda, Spain",
+    origin: "Spain",
+    lat: 38.4784,
+    lng: -0.7924,
+    materials: ["Filaflex 60A", "Filaflex 70A", "Filaflex 82A", "Filaflex 95A", "Conductive TPU"],
+    website: "https://recreus.com/",
+    description: ""
+  },
+  {
+    name: "AzureFilm",
+    city: "Sežana, Slovenia",
+    origin: "Slovenia",
+    lat: 45.7097,
+    lng: 13.8714,
+    materials: ["PLA", "PETG", "PCTG", "ASA", "ABS", "Carbon", "Flexible", "LumberLay"],
+    website: "https://azurefilm.com/",
+    description: ""
+  },
+  {
+    name: "add:north",
+    city: "Ölsremma, Sweden",
+    origin: "Sweden",
+    lat: 57.7333,
+    lng: 13.2833,
+    materials: ["X-PLA", "PETG", "Rigid X", "TPU", "ASA", "Nylon", "Adura", "Textura", "Adamant S1", "Koltron G1", "Addbor N25"],
+    website: "https://www.addnorth.com/",
+    description: ""
+  },
+  {
+    name: "colorFabb",
+    city: "Belfeld, Netherlands",
+    origin: "Netherlands",
+    lat: 51.3722,
+    lng: 6.1408,
+    materials: ["PLA/PHA", "woodFill", "bronzeFill", "copperFill", "steelFill", "LW-PLA", "XT", "nGen", "varioShore TPU", "PA-CF"],
+    website: "https://colorfabb.com/",
+    description: ""
+  },
+  {
+    name: "Fiberlogy",
+    city: "Brzezie, Poland",
+    origin: "Poland",
+    lat: 50.0333,
+    lng: 19.7833,
+    materials: ["PLA", "PLA HD", "ABS", "ASA", "PP", "PA12", "PETG", "Fiberflex", "Fiberwood", "Fibersilk"],
+    website: "https://fiberlogy.com/",
+    description: ""
+  },
+  {
+    name: "Spectrum Filaments",
+    city: "Pęcice, Poland",
+    origin: "Poland",
+    lat: 52.1667,
+    lng: 20.8167,
+    materials: ["PLA", "PLA Pro", "PETG", "ABS", "ASA", "PA12", "TPU", "PC", "Prografen", "ABS Medical", "PETG FX120"],
+    website: "https://spectrumfilaments.com/",
+    description: ""
+  },
+  {
+    name: "Devil Design",
+    city: "Mikołów, Poland",
+    origin: "Poland",
+    lat: 50.1667,
+    lng: 18.9667,
+    materials: ["PLA", "ABS+", "ASA", "PETG", "PA12", "HIPS", "TPU", "SILK"],
+    website: "https://devildesign.com/",
+    description: ""
+  },
+  {
+    name: "Rosa3D",
+    city: "Halinów, Poland",
+    origin: "Poland",
+    lat: 52.2167,
+    lng: 21.4167,
+    materials: ["PLA", "PLA Premium", "PLA Tech", "PLA Starter", "PETG Premium", "ABS", "BioCREATE", "BioWOOD"],
+    website: "https://www.rosa3d.pl/",
+    description: ""
+  },
+  {
+    name: "FILOALFA",
+    city: "Ozzero, Italy",
+    origin: "Italy",
+    lat: 45.3167,
+    lng: 8.9333,
+    materials: ["PLA", "ABS", "HIPS", "Flexy", "Alfanylon", "Alfanylon CF", "Alfaloy", "Alfaloy CF", "Alfaloy GF", "PP CF", "Grafylon"],
+    website: "https://www.filoalfa3d.com/",
+    description: ""
+  },
+  {
+    name: "TreeD Filaments",
+    city: "Seregno, Italy",
+    origin: "Italy",
+    lat: 45.6500,
+    lng: 9.2000,
+    materials: ["PLA", "TENAX", "PC/PBT GF", "PPS CF", "CA-PET Carbon", "PAHP Carbon", "Flexmark", "Healthfil"],
+    website: "https://www.treedfilaments.com/",
+    description: ""
+  },
+  {
+    name: "NinjaTek",
+    city: "Manheim, USA",
+    origin: "USA",
+    lat: 40.1620,
+    lng: -76.3961,
+    materials: ["NinjaFlex", "Cheetah", "Chinchilla", "Armadillo", "Edge"],
+    website: "https://ninjatek.com/",
+    description: ""
+  },
+  {
+    name: "Proto-pasta",
+    city: "Vancouver, USA",
+    origin: "USA",
+    lat: 45.6387,
+    lng: -122.6615,
+    materials: ["HTPLA", "Carbon Fiber PLA", "Stainless Steel PLA", "Magnetic Iron PLA", "Conductive PLA", "Composite PLA", "ESD Nylon"],
+    website: "https://proto-pasta.com/",
+    description: ""
+  },
+  {
+    name: "Taulman3D",
+    city: "Missouri, USA",
+    origin: "USA",
+    lat: 38.5767,
+    lng: -92.1735,
+    materials: ["Nylon 618", "Nylon 645", "Nylon 680", "Alloy 910", "T-Glase", "Guideline", "N-vent"],
+    website: "https://www.taulman3d.com/",
+    description: ""
+  },
+  {
+    name: "3DXTech",
+    city: "Grand Rapids, USA",
+    origin: "USA",
+    lat: 42.9634,
+    lng: -85.6681,
+    materials: ["ABS", "ABS-FR", "PC", "ASA", "PEI", "PEKK", "PEEK", "CarbonX ABS-CF", "Evolv3D OBC"],
+    website: "https://www.3dxtech.com/",
+    description: ""
+  },
+  {
+    name: "Push Plastic",
+    city: "Springdale, USA",
+    origin: "USA",
+    lat: 36.1867,
+    lng: -94.1288,
+    materials: ["PLA", "PETG", "ABS", "PC/ABS", "PC", "PCTG", "PC+PBT", "SiPC", "Nylon", "ASA", "TPU", "PMMA", "PEI"],
+    website: "https://www.pushplastic.com/",
+    description: ""
+  },
+  {
+    name: "Atomic Filament",
+    city: "Kendallville, USA",
+    origin: "USA",
+    lat: 41.4342,
+    lng: -85.2661,
+    materials: ["PLA", "PETG", "ABS", "Carbon Fiber PLA"],
+    website: "https://atomicfilament.com/",
+    description: ""
+  },
+  {
+    name: "American Filament",
+    city: "Huntsville, USA",
+    origin: "USA",
+    lat: 34.7304,
+    lng: -86.5861,
+    materials: ["PLA", "PCTG", "PETG"],
+    website: "https://americanfilament.us/",
+    description: ""
+  },
+  {
+    name: "VOXELPLA",
+    city: "Southern California, USA",
+    origin: "USA",
+    lat: 34.0522,
+    lng: -118.2437,
+    materials: ["PLA", "PLA HS", "PETG", "PETG HS", "ABS", "ASA", "TPU", "Nylon"],
+    website: "https://voxelpla.com/",
+    description: ""
+  },
 ];
 
 // Country name -> flag emoji. Add more entries as new countries come up.
@@ -352,8 +603,13 @@ const countryFlags = {
   "Austria": "🇦🇹",
   "Switzerland": "🇨🇭",
   "Netherlands": "🇳🇱",
-  "CZECH REPUBLIC" : "🇨🇿"
-
+  "Czech Republic": "🇨🇿",
+  "Spain": "🇪🇸",
+  "Slovenia": "🇸🇮",
+  "Sweden": "🇸🇪",
+  "Poland": "🇵🇱",
+  "Italy": "🇮🇹",
+  "USA": "🇺🇸",
 };
 
 function getFlag(country) {
@@ -385,7 +641,7 @@ function getBaseCategory(material) {
   if (m.includes('pa11') || m.includes('pa12') || m.includes('pa6') || m.includes('nylon') || m.includes(' pa ') || m.startsWith('pa ') || m === 'pa') return 'PA';
   if (m.includes('pc')) return 'PC';
   if (m.includes('paht')) return 'PAHT';
-  
+
   // Groups all flexible materials (TPU, TPE, TPC, ...) by property instead of by chemistry
   if (m.includes('tpu') || m.includes('tpe') || m.includes('flex')) return 'Flex';
   if (m.includes('hpp')) return 'HPP';
@@ -528,6 +784,13 @@ function renderMarkersAndList(data) {
       marker.openPopup();
     });
     list.appendChild(card);
+
+    // Clicking the marker highlights and scrolls to the matching sidebar card
+    marker.on('click', () => {
+      document.querySelectorAll('.card.highlighted').forEach(c => c.classList.remove('highlighted'));
+      card.classList.add('highlighted');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   });
 
   document.getElementById('resultCount').textContent =
