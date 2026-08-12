@@ -198,15 +198,6 @@
     background: #faf9f5;
     border-bottom: 1px solid #e0ddd3;
   }
-
-  /* Materials feature paused - remove this block to bring it back */
-  #materialSearchInput,
-  #materialFilter,
-  #additiveFilter,
-  #specialtyFilter,
-  .tags {
-    display: none;
-  }
 </style>
 </head>
 <body>
@@ -659,6 +650,10 @@ function isPureAdditive(material) {
   return knownAdditives.some(a => a.toLowerCase() === material.toLowerCase());
 }
 
+// Manufacturers whose materials are currently shown (tags + filter dropdowns).
+// Add a name here once its material list has been double-checked.
+const visibleMaterialManufacturers = ["Extrudr"];
+
 // Dropdown order: the everyday materials first, exotics further down.
 const categoryOrder = ["PLA", "PETG", "ABS", "ASA", "PA", "PAHT", "PC", "Flex",
                        "PP", "PPS", "PMMA", "HPP", "PVA", "Support"];
@@ -687,7 +682,7 @@ function fillSelect(selectId, values) {
 
 function populateMaterialFilter() {
   const categories = new Set();
-  herstellerData.forEach(item => {
+  herstellerData.filter(item => visibleMaterialManufacturers.includes(item.name)).forEach(item => {
     item.materials.forEach(m => {
       const cat = getBaseCategory(m);
       if (cat) categories.add(cat);
@@ -698,7 +693,7 @@ function populateMaterialFilter() {
 
 function populateAdditiveFilter() {
   const found = new Set();
-  herstellerData.forEach(item => {
+  herstellerData.filter(item => visibleMaterialManufacturers.includes(item.name)).forEach(item => {
     item.materials.forEach(m => {
       knownAdditives.forEach(add => {
         if (m.toLowerCase().includes(add.toLowerCase())) found.add(add);
@@ -710,7 +705,7 @@ function populateAdditiveFilter() {
 
 function populateSpecialtyFilter() {
   const specialties = new Set();
-  herstellerData.forEach(item => {
+  herstellerData.filter(item => visibleMaterialManufacturers.includes(item.name)).forEach(item => {
     item.materials.forEach(m => {
       if (getBaseCategory(m) === null && !isPureAdditive(m)) specialties.add(m);
     });
@@ -752,6 +747,7 @@ function renderMarkersAndList(data) {
       <p>${item.city}</p>
       ${item.description ? `<p>${item.description}</p>` : ''}
       <a href="${item.website}" target="_blank" rel="noopener">${item.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+      ${visibleMaterialManufacturers.includes(item.name) ? `
       <div class="tags">
         ${item.materials.map((m, idx) => {
           const base = getBaseCategory(m);
@@ -768,7 +764,7 @@ function renderMarkersAndList(data) {
         ${item.materials.length > TAG_LIMIT
           ? `<span class="tag-more">+${item.materials.length - TAG_LIMIT} more</span>`
           : ''}
-      </div>
+      </div>` : ''}
     `;
     card.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') return;
@@ -809,19 +805,24 @@ function applyFilters() {
       item.name.toLowerCase().includes(searchTerm) ||
       item.city.toLowerCase().includes(searchTerm);
 
+    // Material search, material/additive, and specialty filters only apply
+    // to manufacturers whose data has been double-checked (visibleMaterialManufacturers).
+    // Everyone else is excluded as soon as any of these filters is active.
+    const isVisible = visibleMaterialManufacturers.includes(item.name);
+
     const matchesMaterialSearch =
       !materialSearchTerm ||
-      item.materials.some(m => m.toLowerCase().includes(materialSearchTerm));
+      (isVisible && item.materials.some(m => m.toLowerCase().includes(materialSearchTerm)));
 
     // Base material and additive must match on the SAME material string,
     // not just "PLA somewhere in the list AND CF somewhere else".
-    const matchesMaterialAndAdditive = item.materials.some(m => {
+    const matchesMaterialAndAdditive = (!material && !additive) || (isVisible && item.materials.some(m => {
       const matchesBase = !material || getBaseCategory(m) === material;
       const matchesAdd = !additive || m.toLowerCase().includes(additive.toLowerCase());
       return matchesBase && matchesAdd;
-    });
+    }));
 
-    const matchesSpecialty = !specialty || item.materials.includes(specialty);
+    const matchesSpecialty = !specialty || (isVisible && item.materials.includes(specialty));
 
     return matchesSearch && matchesMaterialSearch && matchesMaterialAndAdditive && matchesSpecialty;
   });
