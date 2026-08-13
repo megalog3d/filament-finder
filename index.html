@@ -6,6 +6,7 @@
 <title>Filament Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 <style>
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -90,6 +91,7 @@
     padding: 0.5rem;
   }
   .card {
+    position: relative;
     padding: 0.75rem;
     border: 1px solid #e5e2d8;
     border-radius: 8px;
@@ -117,8 +119,35 @@
     font-size: 0.8rem;
     color: #55534c;
   }
+  .last-updated {
+    font-size: 0.7rem !important;
+    color: #a8a496 !important;
+  }
   .card a {
     font-size: 0.8rem;
+    color: #0d556f;
+  }
+  .share-btn {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1;
+    border-radius: 4px;
+  }
+  .share-btn .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 20px;
+    color: #9e9e9e;
+    display: block;
+  }
+  .share-btn:hover {
+    background: #f0f7f7;
+  }
+  .share-btn:hover .material-symbols-outlined {
     color: #0d556f;
   }
   .tags {
@@ -198,6 +227,212 @@
     background: #faf9f5;
     border-bottom: 1px solid #e0ddd3;
   }
+  #locateBtn {
+    background: #fff;
+    border: 1px solid #ccc8ba;
+    border-radius: 6px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    font-family: inherit;
+  }
+  #locateBtn:hover {
+    background: #f3f1e8;
+  }
+  #countryCounter {
+    background: #fff;
+    border: 1px solid #ccc8ba;
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #55534c;
+    font-weight: 400;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    max-width: 240px;
+  }
+  #sortSelect {
+    margin-left: auto;
+  }
+  #copyFilterLinkBtn {
+    background: #fff;
+    border: 1px solid #ccc8ba;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+  #copyFilterLinkBtn .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 20px;
+    color: #55534c;
+    display: block;
+  }
+  #copyFilterLinkBtn:hover {
+    border-color: #0d556f;
+    background: #f0f7f7;
+  }
+  #copyFilterLinkBtn:hover .material-symbols-outlined {
+    color: #0d556f;
+  }
+  .layout {
+    position: relative;
+  }
+  #alphaIndex {
+    flex: 0 0 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 0.6rem 0.25rem;
+    overflow-y: auto;
+    background: #fff;
+  }
+  #alphaIndex button {
+    background: none;
+    border: none;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #a8a496;
+    cursor: pointer;
+    border-radius: 50%;
+    font-family: inherit;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  #alphaIndex button:hover {
+    background: #0d6e6e;
+    color: #fff;
+    transform: scale(1.2);
+  }
+  @media (max-width: 700px) {
+    #alphaIndex { display: none; }
+  }
+  #topRightButtons {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    gap: 0.6rem;
+    z-index: 1000;
+  }
+  #contactBtn {
+    background: #0d556f;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    white-space: nowrap;
+  }
+  #contactModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+  }
+  #contactModal.open { display: flex; }
+  #contactForm {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 380px;
+  }
+  #contactForm label {
+    display: block;
+    font-size: 0.85rem;
+  }
+  #contactForm input, #contactForm textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.9rem;
+    border: 1px solid #ccc8ba;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+  #contactForm button[type="submit"] {
+    background: #0d556f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+  }
+  #contactClose {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #55534c;
+  }
+  #statsBtn {
+    background: #fff;
+    color: #0d556f;
+    border: 1px solid #0d556f;
+    border-radius: 999px;
+    padding: 0.65rem 1.15rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    white-space: nowrap;
+  }
+  #statsModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+  }
+  #statsModal.open { display: flex; }
+  #statsPanel {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 420px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .stats-block {
+    margin-bottom: 1.1rem;
+  }
+  .stats-block h4 {
+    margin: 0 0 0.4rem 0;
+    font-size: 0.85rem;
+    color: #55534c;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid #f0efe9;
+  }
+  .stats-note {
+    font-size: 0.72rem;
+    color: #a8a496;
+    margin-top: 0.3rem;
+  }
 </style>
 </head>
 <body>
@@ -219,6 +454,14 @@
   <select id="specialtyFilter">
     <option value="">All specialties</option>
   </select>
+  <select id="sortSelect">
+    <option value="default">Sort: Default</option>
+    <option value="az">Sort: A–Z</option>
+    <option value="distance" disabled>Sort: Nearest to me</option>
+  </select>
+  <button type="button" id="copyFilterLinkBtn" title="Copy link to this filtered view">
+    <span class="material-symbols-outlined">ios_share</span>
+  </button>
 </div>
 
 <div class="count" id="resultCount"></div>
@@ -228,6 +471,32 @@
 <div class="layout">
   <div id="map"></div>
   <div id="list"></div>
+  <div id="alphaIndex"></div>
+</div>
+
+<div id="topRightButtons">
+  <button id="statsBtn">Stats</button>
+  <button id="contactBtn">Suggest a correction</button>
+</div>
+
+<div id="statsModal">
+  <div id="statsPanel">
+    <button type="button" id="statsClose">✕</button>
+    <h3 style="margin-top:0;">Filament Finder Stats</h3>
+    <div id="statsContent"></div>
+  </div>
+</div>
+
+<div id="contactModal">
+  <form id="contactForm">
+    <button type="button" id="contactClose">✕</button>
+    <h3 style="margin-top:0;">Suggest a correction</h3>
+    <input type="hidden" name="access_key" value="DEIN-ACCESS-KEY-HIER">
+    <label>Name<input type="text" name="name"></label>
+    <label>Email<input type="email" name="email"></label>
+    <label>Message<textarea name="message" rows="4" required></textarea></label>
+    <button type="submit">Send</button>
+  </form>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -244,6 +513,7 @@ const herstellerData = [
     lng: 9.7183,
     materials: ["PLA Basic", "PLA Basic CF", "PLA HS", "PLA NX2 Matt", "PLA Tough", "BioFusion", "GreenTEC", "GreenTEC Pro", "GreenTEC Pro CF", "Flax", "Pearl", "Wood", "PETG", "PETG CF", "PETG Matt", "PETG REC", "ABS", "ABS CF", "ASA", "ASA CF", "ASA GF", "PA6 CF", "PA6 GF", "PA12", "PA12 CF", "PC FR V0", "PC/PBT", "PC/PBT CF", "Flex Semisoft", "Flex Medium", "Flex Medium Matt", "Flex Medium ESD", "Flex Hard", "Flex Hard CF"],
     website: "https://www.extrudr.com/en/de/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -254,6 +524,7 @@ const herstellerData = [
     lng: 15.6141,
     materials: ["PLAx", "PLAx Matt", "PLAx CF", "PETG", "PETG Matt", "PETG CF", "PETG GF", "PCTG", "PCTG CF", "ABSx", "ABSx Matt", "ABSx ESD", "ASAx", "ASAx CF", "PCx", "PCx CF", "Glow in the dark"],
     website: "https://www.nobufil.com/en",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -264,6 +535,7 @@ const herstellerData = [
     lng: 8.7316,
     materials: ["PLA", "PLA Tough", "PLA ESD", "PETG", "PETG ESD", "PET CF15", "ABS", "ABS ESD", "ASA", "PC/ABS", "PAHT", "PAHT CF15", "PMMA", "TPU"],
     website: "https://www.material4print.de",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -274,6 +546,7 @@ const herstellerData = [
     lng: 12.6633,
     materials: ["PLA", "PLA Soft", "PLA CRystal", "PLA CF10", "PETG", "PETG ESD", "PETG V0", "PET CF15", "ABS", "ABS Matt", "ABS FibCR20", "ABS ESD", "ASA", "ASA X", "ASA X FibCR20", "PA6 CF20", "PA6 GF20", "PA12", "PA12 Flex", "PA12 CF15", "PA12 ESD", "PC/ABS", "PC V0", "PC CF10", "PC FibCR20", "PPS CF10", "TPU", "TPU ESD", "TPE", "Flex FibCR20", "PP FibCR20", "Support"],
     website: "https://www.cr3d.de/kategorie/filamente/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -284,6 +557,7 @@ const herstellerData = [
     lng: 7.8214,
     materials: ["PLA+", "ABS+", "PETG", "PA12 CF15"],
     website: "https://filament-unger.de/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -294,6 +568,7 @@ const herstellerData = [
     lng: 12.9758,
     materials: ["PLA", "PLA REC", "PLA Matt", "PETG", "PETG REC", "PETG Matt", "PETG LS", "PETG Glow in the dark", "ASA", "ASA REC", "Olefin", "TPU 65A", "TPU 65D", "TPU 80A", "TPU 92A", "TPU 95A", "TPU 95A Pearlthane", "TPU 98A", "PS Flex", "Support"],
     website: "https://www.bavaria-filaments.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -304,6 +579,7 @@ const herstellerData = [
     lng: 8.6939,
     materials: ["PLA", "PETG", "ABS", "PA CF15", "PA GF15", "HPP 52ShD", "HPP GF15", "HPP GF25", "Flex S90"],
     website: "https://grauts.com/shop/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -314,6 +590,7 @@ const herstellerData = [
     lng: 10.7053,
     materials: ["PLA", "PETG", "TPU"],
     website: "https://dasfilament.de/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -324,6 +601,7 @@ const herstellerData = [
     lng: 6.6833,
     materials: ["PLA", "PLA REC", "PLA Matt", "PLA Wood", "PETG", "PETG Matt", "PETG REC", "PCTG", "ABS", "ASA X", "PC", "PA6", "TPU", "Flex", "PVA", "CF", "Kevlar", "Glow in the dark"],
     website: "https://redline-filament.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -334,6 +612,7 @@ const herstellerData = [
     lng: 10.5300,
     materials: ["PLA", "PETG"],
     website: "https://www.recyclingfabrik.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -344,6 +623,7 @@ const herstellerData = [
     lng: 8.6690,
     materials: ["PA Pure Pro", "PA Pure Lite", "PA CF Pro", "PA CF Lite", "PA GF Pro", "PA GF30 Pro", "PA ESD"],
     website: "http://www.fiberthree.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -354,6 +634,7 @@ const herstellerData = [
     lng: 14.4214,
     materials: ["PLA", "PETG CF", "PETG Tungesten 75", "PETG Magnetite", "PETG Ultraglow", "ASA", "PC Blend", "PC Blend CF", "PA11", "PA11 CF", "PP GF", "PP CF", "TPU 95A", "PVB", "PEI", "Woodfill" ],
     website: "https://www.prusa3d.com/category/prusament/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -364,6 +645,7 @@ const herstellerData = [
     lng: 6.9603,
     materials: ["iglidur i150", "iglidur i151", "iglidur i180", "iglidur i190", "iglidur i190PF", "iglidur A350", "iglidur RW370", "igumid P150"],
     website: "https://www.igus.de/3d-printing-material/3d-drucker-filament",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -374,6 +656,7 @@ const herstellerData = [
     lng: 17.4667,
     materials: ["PLA", "ABS", "ASA", "HIPS", "PVA", "CPE", "Nylon", "Flexfill", "Timberfill", "NonOilen"],
     website: "https://fillamentum.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -384,6 +667,7 @@ const herstellerData = [
     lng: 13.2274,
     materials: ["PLA", "ABS", "ABS FlamelessV0", "PETG", "IMPAK", "WillowFlex", "3dkTop", "3DKlean"],
     website: "https://3dk.berlin/de/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -394,6 +678,7 @@ const herstellerData = [
     lng: 17.0764,
     materials: ["PLA", "ABS", "PETG", "RubberJet", "PAJet", "CFJet"],
     website: "https://www.filament-pm.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -404,6 +689,7 @@ const herstellerData = [
     lng: 5.8528,
     materials: ["PLA", "ABS", "PETG", "PP", "ApolloX", "TitanX", "CarbonFil", "HDglass"],
     website: "https://formfutura.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -414,6 +700,7 @@ const herstellerData = [
     lng: -0.7924,
     materials: ["Filaflex 60A", "Filaflex 70A", "Filaflex 82A", "Filaflex 95A", "Conductive TPU"],
     website: "https://recreus.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -424,6 +711,7 @@ const herstellerData = [
     lng: 13.8714,
     materials: ["PLA", "PETG", "PCTG", "ASA", "ABS", "Carbon", "Flexible", "LumberLay"],
     website: "https://azurefilm.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -434,6 +722,7 @@ const herstellerData = [
     lng: 13.2833,
     materials: ["X-PLA", "PETG", "Rigid X", "TPU", "ASA", "Nylon", "Adura", "Textura", "Adamant S1", "Koltron G1", "Addbor N25"],
     website: "https://www.addnorth.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -444,6 +733,7 @@ const herstellerData = [
     lng: 6.1408,
     materials: ["PLA/PHA", "woodFill", "bronzeFill", "copperFill", "steelFill", "LW-PLA", "XT", "nGen", "varioShore TPU", "PA-CF"],
     website: "https://colorfabb.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -454,6 +744,7 @@ const herstellerData = [
     lng: 19.7833,
     materials: ["PLA", "PLA HD", "ABS", "ASA", "PP", "PA12", "PETG", "Fiberflex", "Fiberwood", "Fibersilk"],
     website: "https://fiberlogy.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -464,6 +755,7 @@ const herstellerData = [
     lng: 20.8167,
     materials: ["PLA", "PLA Pro", "PETG", "ABS", "ASA", "PA12", "TPU", "PC", "Prografen", "ABS Medical", "PETG FX120"],
     website: "https://spectrumfilaments.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -474,6 +766,7 @@ const herstellerData = [
     lng: 18.9667,
     materials: ["PLA", "ABS+", "ASA", "PETG", "PA12", "HIPS", "TPU", "SILK"],
     website: "https://devildesign.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -484,6 +777,7 @@ const herstellerData = [
     lng: 21.4167,
     materials: ["PLA", "PLA Premium", "PLA Tech", "PLA Starter", "PETG Premium", "ABS", "BioCREATE", "BioWOOD"],
     website: "https://www.rosa3d.pl/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -494,6 +788,7 @@ const herstellerData = [
     lng: 8.9333,
     materials: ["PLA", "ABS", "HIPS", "Flexy", "Alfanylon", "Alfanylon CF", "Alfaloy", "Alfaloy CF", "Alfaloy GF", "PP CF", "Grafylon"],
     website: "https://www.filoalfa3d.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -504,6 +799,7 @@ const herstellerData = [
     lng: 9.2000,
     materials: ["PLA", "TENAX", "PC/PBT GF", "PPS CF", "CA-PET Carbon", "PAHP Carbon", "Flexmark", "Healthfil"],
     website: "https://www.treedfilaments.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -514,6 +810,7 @@ const herstellerData = [
     lng: -76.3961,
     materials: ["NinjaFlex", "Cheetah", "Chinchilla", "Armadillo", "Edge"],
     website: "https://ninjatek.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -524,6 +821,7 @@ const herstellerData = [
     lng: -122.6615,
     materials: ["HTPLA", "Carbon Fiber PLA", "Stainless Steel PLA", "Magnetic Iron PLA", "Conductive PLA", "Composite PLA", "ESD Nylon"],
     website: "https://proto-pasta.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -534,6 +832,7 @@ const herstellerData = [
     lng: -92.1735,
     materials: ["Nylon 618", "Nylon 645", "Nylon 680", "Alloy 910", "T-Glase", "Guideline", "N-vent"],
     website: "https://www.taulman3d.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -544,6 +843,7 @@ const herstellerData = [
     lng: -85.6681,
     materials: ["ABS", "ABS-FR", "PC", "ASA", "PEI", "PEKK", "PEEK", "CarbonX ABS-CF", "Evolv3D OBC"],
     website: "https://www.3dxtech.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -554,6 +854,7 @@ const herstellerData = [
     lng: -94.1288,
     materials: ["PLA", "PETG", "ABS", "PC/ABS", "PC", "PCTG", "PC+PBT", "SiPC", "Nylon", "ASA", "TPU", "PMMA", "PEI"],
     website: "https://www.pushplastic.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -564,6 +865,7 @@ const herstellerData = [
     lng: -85.2661,
     materials: ["PLA", "PETG", "ABS", "Carbon Fiber PLA"],
     website: "https://atomicfilament.com/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -574,6 +876,7 @@ const herstellerData = [
     lng: -86.5861,
     materials: ["PLA", "PCTG", "PETG"],
     website: "https://americanfilament.us/",
+    lastUpdated: "",
     description: ""
   },
   {
@@ -584,6 +887,7 @@ const herstellerData = [
     lng: -118.2437,
     materials: ["PLA", "PLA HS", "PETG", "PETG HS", "ABS", "ASA", "TPU", "Nylon"],
     website: "https://voxelpla.com/",
+    lastUpdated: "",
     description: ""
   },
 ];
@@ -607,11 +911,18 @@ function getFlag(country) {
   return countryFlags[country] || "";
 }
 
-// Renders the "Made in <flag>" badge, or nothing if the origin is unknown.
-function flagTag(origin) {
+// Manufacturers whose "Made in" claim is confirmed and safe to show.
+// Everyone else keeps their origin/flag data in the object (not deleted),
+// it's just hidden here until double-checked.
+const confirmedOriginManufacturers = ["Extrudr", "Prusament by Prusa", "add:north"];
+
+// Renders the "Made in house in <flag>" badge - only for confirmed manufacturers,
+// and only if a flag/origin is set at all.
+function flagTag(origin, name) {
   const flag = getFlag(origin);
   if (!flag) return "";
-  return `<span class="flag-tag">Made in ${flag}</span>`;
+  if (!confirmedOriginManufacturers.includes(name)) return "";
+  return `<span class="flag-tag">Made in house in ${flag}</span>`;
 }
 
 // Maps a raw material name to its base category.
@@ -722,6 +1033,87 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18
 }).addTo(map);
 
+// "Near me" button, top-right corner of the map
+const locateControl = L.control({ position: 'topright' });
+locateControl.onAdd = function () {
+  const div = L.DomUtil.create('div');
+  div.innerHTML = '<button id="locateBtn" type="button">📍 Near me</button>';
+  L.DomEvent.disableClickPropagation(div);
+  return div;
+};
+locateControl.addTo(map);
+
+let userMarker = null;
+let userLocation = null;
+
+// Distance between two lat/lng points in km (haversine formula)
+function distanceKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target.id !== 'locateBtn') return;
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser.');
+    return;
+  }
+  e.target.textContent = 'Locating...';
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      userLocation = { lat: latitude, lng: longitude };
+      if (userMarker) map.removeLayer(userMarker);
+      userMarker = L.circleMarker([latitude, longitude], {
+        radius: 8,
+        color: '#0d556f',
+        fillColor: '#0d556f',
+        fillOpacity: 0.6
+      }).addTo(map).bindPopup('You are here');
+      map.setView([latitude, longitude], 9);
+      e.target.textContent = '📍 Near me';
+
+      // Distance sort only makes sense once we know where "here" is
+      const distanceOption = document.querySelector('#sortSelect option[value="distance"]');
+      distanceOption.disabled = false;
+      document.getElementById('sortSelect').value = 'distance';
+      applyFilters();
+    },
+    () => {
+      alert('Could not determine your location.');
+      e.target.textContent = '📍 Near me';
+    }
+  );
+});
+
+// Country count summary, bottom-left corner of the map
+const countryCounterControl = L.control({ position: 'bottomleft' });
+countryCounterControl.onAdd = function () {
+  const div = L.DomUtil.create('div');
+  div.id = 'countryCounter';
+  return div;
+};
+countryCounterControl.addTo(map);
+
+function updateCountryCounter(data) {
+  const counts = {};
+  data.forEach(item => {
+    if (!item.origin) return;
+    counts[item.origin] = (counts[item.origin] || 0) + 1;
+  });
+  const el = document.getElementById('countryCounter');
+  if (!el) return;
+  el.textContent = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([country, count]) => `${getFlag(country)} ${count}`)
+    .join(' · ');
+}
+
 // How many material tags a card shows before collapsing the rest
 const TAG_LIMIT = 8;
 
@@ -736,17 +1128,20 @@ function renderMarkersAndList(data) {
   data.forEach(item => {
     const marker = L.marker([item.lat, item.lng]).addTo(map);
     marker.bindPopup(
-      `<strong>${item.name}</strong> ${flagTag(item.origin)}<br>${item.city}${item.description ? '<br>' + item.description : ''}`
+      `<strong>${item.name}</strong> ${flagTag(item.origin, item.name)}<br>${item.city}${item.description ? '<br>' + item.description : ''}`
     );
     markers.push(marker);
 
     const card = document.createElement('div');
     card.className = 'card';
+    card.dataset.name = item.name;
     card.innerHTML = `
-      <h3>${item.name} ${flagTag(item.origin)}</h3>
+      <h3>${item.name} ${flagTag(item.origin, item.name)}</h3>
       <p>${item.city}</p>
       ${item.description ? `<p>${item.description}</p>` : ''}
+      ${item.lastUpdated ? `<p class="last-updated">Last checked: ${item.lastUpdated}</p>` : ''}
       <a href="${item.website}" target="_blank" rel="noopener">${item.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+      <button type="button" class="share-btn" title="Copy link to this manufacturer" data-share="${item.name}"><span class="material-symbols-outlined">ios_share</span></button>
       ${visibleMaterialManufacturers.includes(item.name) ? `
       <div class="tags">
         ${item.materials.map((m, idx) => {
@@ -768,6 +1163,16 @@ function renderMarkersAndList(data) {
     `;
     card.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') return;
+      const shareBtn = e.target.closest('.share-btn');
+      if (shareBtn) {
+        const url = `${window.location.origin}${window.location.pathname}?manufacturer=${encodeURIComponent(item.name)}`;
+        navigator.clipboard.writeText(url).then(() => {
+          const icon = shareBtn.querySelector('.material-symbols-outlined');
+          icon.textContent = 'check';
+          setTimeout(() => { icon.textContent = 'ios_share'; }, 1200);
+        });
+        return;
+      }
       if (e.target.classList.contains('tag-more')) {
         const tagBox = card.querySelector('.tags');
         tagBox.classList.toggle('expanded');
@@ -791,6 +1196,8 @@ function renderMarkersAndList(data) {
 
   document.getElementById('resultCount').textContent =
     `${data.length} manufacturers found`;
+
+  updateCountryCounter(data);
 }
 
 function applyFilters() {
@@ -827,6 +1234,16 @@ function applyFilters() {
     return matchesSearch && matchesMaterialSearch && matchesMaterialAndAdditive && matchesSpecialty;
   });
 
+  const sortMode = document.getElementById('sortSelect').value;
+  if (sortMode === 'az') {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortMode === 'distance' && userLocation) {
+    filtered.sort((a, b) =>
+      distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
+      distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+    );
+  }
+
   renderMarkersAndList(filtered);
 }
 
@@ -835,13 +1252,188 @@ document.getElementById('materialSearchInput').addEventListener('input', applyFi
 document.getElementById('materialFilter').addEventListener('change', applyFilters);
 document.getElementById('additiveFilter').addEventListener('change', applyFilters);
 document.getElementById('specialtyFilter').addEventListener('change', applyFilters);
+document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
 populateMaterialFilter();
 populateAdditiveFilter();
 populateSpecialtyFilter();
-renderMarkersAndList(herstellerData);
+
+// Pick up filters from the URL, e.g. index.html?material=PLA
+// so links (YouTube description, social posts, ...) can point
+// straight at a pre-filtered view.
+const urlParams = new URLSearchParams(window.location.search);
+const urlMaterial = urlParams.get('material');
+const urlAdditive = urlParams.get('additive');
+const urlSpecialty = urlParams.get('specialty');
+const urlSearch = urlParams.get('search');
+
+if (urlMaterial) document.getElementById('materialFilter').value = urlMaterial;
+if (urlAdditive) document.getElementById('additiveFilter').value = urlAdditive;
+if (urlSpecialty) document.getElementById('specialtyFilter').value = urlSpecialty;
+if (urlSearch) document.getElementById('searchInput').value = urlSearch;
+
+if (urlMaterial || urlAdditive || urlSpecialty || urlSearch) {
+  applyFilters();
+} else {
+  renderMarkersAndList(herstellerData);
+}
+
+// If the page was opened via a shared link (?manufacturer=Name),
+// jump straight to that manufacturer's marker and card, and open
+// its popup so there's no ambiguity about which one is meant.
+const sharedManufacturer = new URLSearchParams(window.location.search).get('manufacturer');
+if (sharedManufacturer) {
+  const targetIndex = herstellerData.findIndex(item => item.name === sharedManufacturer);
+  if (targetIndex !== -1) {
+    const target = herstellerData[targetIndex];
+    map.setView([target.lat, target.lng], 10);
+    const targetMarker = markers[targetIndex];
+    if (targetMarker) targetMarker.openPopup();
+    const card = document.querySelector(`#list .card[data-name="${CSS.escape(sharedManufacturer)}"]`);
+    if (card) {
+      card.classList.add('highlighted');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+// A-Z jump index, built once from the letters that actually occur
+function buildAlphaIndex() {
+  const el = document.getElementById('alphaIndex');
+  const letters = Array.from(new Set(
+    herstellerData.map(item => item.name.trim().charAt(0).toUpperCase())
+  )).sort();
+  el.innerHTML = letters.map(l => `<button type="button" data-letter="${l}">${l}</button>`).join('');
+}
+buildAlphaIndex();
+
+document.getElementById('alphaIndex').addEventListener('click', (e) => {
+  const letter = e.target.dataset.letter;
+  if (!letter) return;
+
+  const sortSelect = document.getElementById('sortSelect');
+  const needsResort = sortSelect.value !== 'az';
+  if (needsResort) {
+    sortSelect.value = 'az';
+    applyFilters();
+  }
+
+  // Wait a tick so the (possibly just re-sorted) list has re-rendered
+  requestAnimationFrame(() => {
+    const card = Array.from(document.querySelectorAll('#list .card'))
+      .find(c => (c.dataset.name || '').toUpperCase().startsWith(letter));
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+document.getElementById('contactBtn').addEventListener('click', () => {
+  document.getElementById('contactModal').classList.add('open');
+});
+document.getElementById('contactClose').addEventListener('click', () => {
+  document.getElementById('contactModal').classList.remove('open');
+});
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const res = await fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body: data
+  });
+  if (res.ok) {
+    alert('Thanks! Your message was sent.');
+    form.reset();
+    document.getElementById('contactModal').classList.remove('open');
+  } else {
+    alert('Something went wrong — please try again.');
+  }
+});
+
+function buildStats() {
+  const total = herstellerData.length;
+  const withOrigin = herstellerData.filter(h => h.origin);
+
+  // Country distribution - based on all confirmed origins
+  const countryCounts = {};
+  withOrigin.forEach(h => {
+    countryCounts[h.origin] = (countryCounts[h.origin] || 0) + 1;
+  });
+  const countryRows = Object.entries(countryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([country, count]) =>
+      `<div class="stats-row"><span>${getFlag(country)} ${country}</span><span>${count}</span></div>`
+    ).join('');
+
+  // Material distribution - only from manufacturers with checked material data,
+  // so this doesn't imply certainty about the rest of the list.
+  const materialCounts = {};
+  herstellerData
+    .filter(h => visibleMaterialManufacturers.includes(h.name))
+    .forEach(h => {
+      h.materials.forEach(m => {
+        const cat = getBaseCategory(m) || (isPureAdditive(m) ? null : 'Specialty');
+        if (cat) materialCounts[cat] = (materialCounts[cat] || 0) + 1;
+      });
+    });
+  const materialRows = Object.entries(materialCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([cat, count]) =>
+      `<div class="stats-row"><span>${cat}</span><span>${count}</span></div>`
+    ).join('');
+
+  document.getElementById('statsContent').innerHTML = `
+    <div class="stats-block">
+      <h4>Manufacturers</h4>
+      <div class="stats-row"><span>Total listed</span><span>${total}</span></div>
+      <div class="stats-row"><span>With confirmed production country</span><span>${withOrigin.length}</span></div>
+    </div>
+    <div class="stats-block">
+      <h4>By country</h4>
+      ${countryRows || '<p class="stats-note">No confirmed origins yet.</p>'}
+    </div>
+    <div class="stats-block">
+      <h4>By material category</h4>
+      ${materialRows || '<p class="stats-note">No manufacturers with checked material data yet.</p>'}
+      <p class="stats-note">Based only on manufacturers whose material list has been double-checked (currently: ${visibleMaterialManufacturers.join(', ') || 'none'}).</p>
+    </div>
+  `;
+}
+
+document.getElementById('statsBtn').addEventListener('click', () => {
+  buildStats();
+  document.getElementById('statsModal').classList.add('open');
+});
+document.getElementById('statsClose').addEventListener('click', () => {
+  document.getElementById('statsModal').classList.remove('open');
+});
+
+document.getElementById('copyFilterLinkBtn').addEventListener('click', (e) => {
+  const params = new URLSearchParams();
+  const search = document.getElementById('searchInput').value.trim();
+  const material = document.getElementById('materialFilter').value;
+  const additive = document.getElementById('additiveFilter').value;
+  const specialty = document.getElementById('specialtyFilter').value;
+
+  if (search) params.set('search', search);
+  if (material) params.set('material', material);
+  if (additive) params.set('additive', additive);
+  if (specialty) params.set('specialty', specialty);
+
+  const query = params.toString();
+  const url = `${window.location.origin}${window.location.pathname}${query ? '?' + query : ''}`;
+
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = e.target.closest('#copyFilterLinkBtn');
+    const icon = btn.querySelector('.material-symbols-outlined');
+    icon.textContent = 'check';
+    setTimeout(() => { icon.textContent = 'ios_share'; }, 1200);
+  });
+});
 
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
