@@ -642,7 +642,7 @@ const herstellerData = [
     origin: "Czech Republic",
     lat: 50.0886,
     lng: 14.4214,
-    materials: ["PLA", "PETG CF", "PETG Tungesten 75", "PETG Magnetite", "PETG Ultraglow", "ASA", "PC Blend", "PC Blend CF", "PA11", "PA11 CF", "PP GF", "PP CF", "TPU 95A", "PVB", "PEI", "Woodfill" ],
+    materials: ["PLA", "PETG", "PETG CF", "PETG V0", "PETG Tungsten 75", "PETG Magnetite 40", "PETG Ultraglow", "PETG REC", "ASA", "PC Blend", "PC Blend CF", "PC Space Grade", "PA11 Natural", "PA11 CF", "PP GF", "PP CF", "TPU 95A", "PVB", "PEI 1010", "Woodfill"],
     website: "https://www.prusa3d.com/category/prusament/",
     lastUpdated: "",
     description: ""
@@ -973,7 +973,7 @@ function isPureAdditive(material) {
 
 // Manufacturers whose materials are currently shown (tags + filter dropdowns).
 // Add a name here once its material list has been double-checked.
-const visibleMaterialManufacturers = ["Extrudr"];
+const visibleMaterialManufacturers = ["Extrudr, Prusament by Prusa"];
 
 // Dropdown order: the everyday materials first, exotics further down.
 const categoryOrder = ["PLA", "PETG", "ABS", "ASA", "PA", "PAHT", "PC", "Flex",
